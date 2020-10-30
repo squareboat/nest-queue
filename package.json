@@ -1,0 +1,47 @@
+{
+  "name": "@squareboat/nest-queue",
+  "version": "0.1.9",
+  "description": " The queue package for your NestJS Applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "nestjs",
+    "nestjs-queue",
+    "nestjs-queueing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/squareboat/nest-queue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/squareboat/nest-queue/issues"
+  },
+  "homepage": "https://github.com/squareboat/nest-queue",
+  "author": "Vinayak Sarawagi <vinayaksarawagi25@gmail.com>",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "eslint 'lib/**/*.ts' --fix",
+    "prepublish:npm": "npm run build",
+    "publish:npm": "npm publish --access public",
+    "prepublish:next": "npm run build",
+    "publish:next": "npm publish --access public --tag next",
+    "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^7.4.2",
+    "@nestjs/core": "^7.4.2",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^3.9.7"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^6.7.0 || ^7.0.0",
+    "@nestjs/core": "^6.7.0 || ^7.0.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.782.0"
+  }
+}
