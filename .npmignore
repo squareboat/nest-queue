@@ -8,6 +8,7 @@ tsconfig.json
 .prettierrc
 
 # github
+cover.png
 .github
 CONTRIBUTING.MD
 
