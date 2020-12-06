@@ -1,5 +1,6 @@
 import { DynamicModule, Module, Provider, Type } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
+import { EventModule } from "@squareboat/nest-events";
 import { QUEUE_OPTIONS } from "./constants";
 import { QueueExplorer } from "./explorer";
 import {
@@ -20,7 +21,7 @@ export class QueueModule {
     return {
       global: options.isGlobal || false,
       module: QueueModule,
-      imports: [DiscoveryModule],
+      imports: [DiscoveryModule, EventModule],
       providers: [
         QueueExplorer,
         QueueService,
@@ -37,7 +38,7 @@ export class QueueModule {
     return {
       global: options.isGlobal || false,
       module: QueueModule,
-      imports: [DiscoveryModule],
+      imports: [DiscoveryModule, EventModule],
       providers: [
         QueueExplorer,
         QueueService,

@@ -1,16 +1,19 @@
-import { InternalMessage, ListenerOptions, QueueDriver } from './interfaces';
-import { DriverJob } from './jobs';
-import { QueueMetadata } from './metadata';
-import { Dispatch } from './queue';
+import { EmitEvent } from "@squareboat/nest-events";
+import { JobFailed, JobProcessed, JobProcessing } from "./events";
+import { InternalMessage, ListenerOptions, QueueDriver } from "./interfaces";
+import { DriverJob } from "./jobs";
+import { QueueMetadata } from "./metadata";
+import { Dispatch } from "./queue";
 
 export class QueueWorker {
   constructor(
     private options: ListenerOptions,
-    private connection: QueueDriver,
+    private connection: QueueDriver
   ) {}
 
   async run(job: DriverJob) {
     const message = this.fetchMessage(job);
+    EmitEvent(new JobProcessing(), { job: message });
     const { data } = message;
     try {
       const targetJob = QueueMetadata.getJob(message.job);
@@ -18,7 +21,9 @@ export class QueueWorker {
 
       await targetJob.target(data);
       await this.success(message, job);
+      EmitEvent(new JobProcessed(), { job: message });
     } catch (e) {
+      EmitEvent(new JobFailed(), { job: message, error: e });
       await this.retry(message, job);
     }
   }
