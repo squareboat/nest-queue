@@ -7,8 +7,8 @@
   "keywords": [
     "nestjs",
     "nestjs-queue",
-    "nestjs-queueing",
-    "nestjs-sqs"
+    "nestjs-sqs",
+    "nestjs-backend"
   ],
   "repository": {
     "type": "git",
@@ -25,8 +25,11 @@
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "eslint 'lib/**/*.ts' --fix",
-    "prepublish:npm": "npm run build",
+    "readme:npm": "mv README.md README.git.md && mv README.npm.md README.md",
+    "readme:git": "mv README.md README.npm.md && mv README.git.md README.md",
+    "prepublish:npm": "npm run readme:npm && npm run build",
     "publish:npm": "npm publish --access public",
+    "postpublish:npm": "npm run readme:git",
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
