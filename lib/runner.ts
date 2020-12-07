@@ -4,7 +4,7 @@ import { QueueMetadata } from "./metadata";
 import { QueueService } from "./service";
 import { QueueWorker } from "./worker";
 
-export class QueueListener {
+export class QueueRunner {
   private options: ListenerOptions;
 
   constructor(options?: ListenerOptions) {
@@ -25,8 +25,8 @@ export class QueueListener {
     }
   }
 
-  static init(options?: ListenerOptions): QueueListener {
-    return new QueueListener(options);
+  static init(options?: ListenerOptions): QueueRunner {
+    return new QueueRunner(options);
   }
 
   private async poll(connection: QueueDriver): Promise<DriverJob | null> {
@@ -34,7 +34,10 @@ export class QueueListener {
     return job;
   }
 
-  async run() {
+  /**
+   * Listen to the queue
+   */
+  async listen() {
     const connection = QueueService.getConnection(this.options.connection);
     const worker = new QueueWorker(this.options, connection);
 
@@ -46,5 +49,11 @@ export class QueueListener {
         await new Promise((resolve) => setTimeout(resolve, this.options.sleep));
       }
     }
+  }
+
+  async purge(): Promise<void> {
+    const connection = QueueService.getConnection(this.options.connection);
+    await connection.purge({ queue: this.options.queue });
+    return;
   }
 }
