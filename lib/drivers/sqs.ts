@@ -50,4 +50,14 @@ export class SqsQueueDriver implements QueueDriver {
 
     return;
   }
+
+  async purge(options: Record<string, any>): Promise<void> {
+    const params = {
+      QueueUrl: this.options.prefix + "/" + options.queue,
+    };
+
+    await this.client.purgeQueue(params).promise();
+
+    return;
+  }
 }

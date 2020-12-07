@@ -1,68 +1,59 @@
-import { EmitEvent } from "@squareboat/nest-events";
-import { JobFailed, JobProcessed, JobProcessing } from "./events";
-import { InternalMessage, ListenerOptions, QueueDriver } from "./interfaces";
+import { ListenerOptions, QueueDriver } from "./interfaces";
 import { DriverJob } from "./jobs";
 import { QueueMetadata } from "./metadata";
-import { Dispatch } from "./queue";
+import { QueueService } from "./service";
+import { JobRunner } from "./jobrunner";
 
 export class QueueWorker {
-  constructor(
-    private options: ListenerOptions,
-    private connection: QueueDriver
-  ) {}
+  private options: ListenerOptions;
 
-  async run(job: DriverJob) {
-    const message = this.fetchMessage(job);
-    EmitEvent(new JobProcessing(), { job: message });
-    const { data } = message;
-    try {
-      const targetJob = QueueMetadata.getJob(message.job);
-      if (!targetJob || !targetJob.target) return;
+  constructor(options?: ListenerOptions) {
+    const defaultOptions = QueueMetadata.getDefaultOptions();
+    this.options = options || {};
+    this.options = {
+      ...defaultOptions,
+      queue: undefined,
+      ...this.options,
+    };
 
-      await targetJob.target(data);
-      await this.success(message, job);
-      EmitEvent(new JobProcessed(), { job: message });
-    } catch (e) {
-      EmitEvent(new JobFailed(), { job: message, error: e });
-      await this.retry(message, job);
+    if (!this.options.queue) {
+      const data = QueueMetadata.getData();
+      this.options["queue"] =
+        data.connections[
+          this.options.connection || defaultOptions.connection
+        ].queue;
     }
   }
 
-  /**
-   * Job processed succesfully method
-   * @param message
-   * @param job
-   */
-  async success(message: InternalMessage, job: DriverJob): Promise<void> {
-    await this.removeJobFromQueue(job);
+  static init(options?: ListenerOptions): QueueWorker {
+    return new QueueWorker(options);
+  }
+
+  private async poll(connection: QueueDriver): Promise<DriverJob | null> {
+    const job = await connection.pull({ queue: this.options.queue });
+    return job;
   }
 
   /**
-   * Retry job after it has failed
-   * @param message
-   * @param job
+   * Listen to the queue
    */
-  async retry(message: InternalMessage, job: DriverJob): Promise<void> {
-    this.removeJobFromQueue(job);
-    await this.removeJobFromQueue(job);
-    message.attemptCount += 1;
-    if (message.attemptCount === message.tries) return;
-    Dispatch(message);
+  async listen() {
+    const connection = QueueService.getConnection(this.options.connection);
+    const worker = new JobRunner(this.options, connection);
+
+    while (1) {
+      const job = await this.poll(connection);
+      if (job) {
+        await worker.run(job);
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, this.options.sleep));
+      }
+    }
   }
 
-  /**
-   * Remove job from the queue method
-   * @param job
-   */
-  async removeJobFromQueue(job: DriverJob): Promise<void> {
-    await this.connection.remove(job, this.options);
-  }
-
-  /**
-   * Fetch message out of the driver message
-   * @param job
-   */
-  fetchMessage(job: DriverJob): InternalMessage {
-    return JSON.parse(job.getMessage());
+  async purge(): Promise<void> {
+    const connection = QueueService.getConnection(this.options.connection);
+    await connection.purge({ queue: this.options.queue });
+    return;
   }
 }
