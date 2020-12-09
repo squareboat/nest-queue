@@ -10,11 +10,16 @@ export interface SqsBrokerOption {
   region: string;
 }
 
+export interface SyncBrokerOption {
+  driver: "sync";
+  queue?: "sync";
+}
+
 export interface QueueOptions {
   isGlobal?: boolean;
   default: string;
   connections: {
-    [key: string]: SqsBrokerOption;
+    [key: string]: SqsBrokerOption | SyncBrokerOption;
   };
 }
 
