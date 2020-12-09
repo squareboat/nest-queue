@@ -21,7 +21,7 @@ __Few Hightlights__
 
 ## Documentation
 
-To read the complete documentation, [click here](https://opensource.squareboat.com/nest-queue/).
+To read the complete documentation, [click here](https://squareboat.com/open-source/nest-queue/).
 
 ## Contributing
 To know about contributing to this package, read the guidelines [here](./CONTRIBUTING.md)
