@@ -1,8 +1,8 @@
-import { ListenerOptions, QueueDriver } from "./interfaces";
-import { DriverJob } from "./jobs";
+import { ListenerOptions } from "./interfaces";
 import { QueueMetadata } from "./metadata";
 import { QueueService } from "./service";
 import { JobRunner } from "./jobrunner";
+import { DriverJob, QueueDriver } from "@squareboat/nest-queue-strategy";
 
 export class QueueWorker {
   private options: ListenerOptions;
@@ -18,10 +18,9 @@ export class QueueWorker {
 
     if (!this.options.queue) {
       const data = QueueMetadata.getData();
-      this.options["queue"] =
-        data.connections[
-          this.options.connection || defaultOptions.connection
-        ].queue;
+      this.options["queue"] = data.connections[
+        this.options.connection || defaultOptions.connection
+      ].queue as string;
     }
   }
 

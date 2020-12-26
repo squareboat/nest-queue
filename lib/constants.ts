@@ -9,33 +9,3 @@ export const events = {
   jobProcessing: "sqb-queue::job-processing",
   jobProcessed: "sqb-queue::job-processed",
 };
-
-export function OnJobFailed() {
-  return function (
-    target: Record<string, any>,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
-    ListensTo(events.jobFailed)(target, propertyKey, descriptor);
-  };
-}
-
-export function OnJobProcessing() {
-  return function (
-    target: Record<string, any>,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
-    ListensTo(events.jobProcessing)(target, propertyKey, descriptor);
-  };
-}
-
-export function OnJobProcessed() {
-  return function (
-    target: Record<string, any>,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
-    ListensTo(events.jobProcessed)(target, propertyKey, descriptor);
-  };
-}

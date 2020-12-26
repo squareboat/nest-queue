@@ -1,4 +1,8 @@
-import { InternalMessage, JobOptions, Message } from "../interfaces";
+import {
+  InternalMessage,
+  JobOptions,
+  Message,
+} from "@squareboat/nest-queue-strategy";
 import { QueueMetadata } from "../metadata";
 
 type Complete<T> = {
@@ -27,7 +31,7 @@ export class PayloadBuilder {
       const config = QueueMetadata.getData();
       payload.queue =
         payload.connection != undefined
-          ? config.connections[payload.connection].queue
+          ? (config.connections[payload.connection].queue as string)
           : undefined;
     }
 

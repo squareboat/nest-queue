@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { JobOptions } from "@squareboat/nest-queue-strategy";
 import { QUEUE_OPTIONS } from "./constants";
-import { QueueOptions, JobOptions, InternalMessage } from "./interfaces";
+import { QueueOptions } from "./interfaces";
 
 interface JobTarget {
   options: JobOptions;
@@ -17,7 +18,7 @@ export class QueueMetadata {
     QueueMetadata.data = data;
     QueueMetadata.defaultOptions = {
       connection: data.default,
-      queue: data.connections[data.default].queue,
+      queue: data.connections[data.default].queue as string,
       delay: 10,
       tries: 5,
       timeout: 30,

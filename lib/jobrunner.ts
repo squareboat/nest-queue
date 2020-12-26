@@ -1,5 +1,9 @@
-import { InternalMessage, ListenerOptions, QueueDriver } from "./interfaces";
-import { DriverJob } from "./jobs";
+import {
+  DriverJob,
+  InternalMessage,
+  QueueDriver,
+} from "@squareboat/nest-queue-strategy";
+import { ListenerOptions } from "./interfaces";
 import { QueueMetadata } from "./metadata";
 import { Dispatch } from "./queue";
 

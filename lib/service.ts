@@ -1,20 +1,18 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { QUEUE_OPTIONS } from "./constants";
-import { SqsQueueDriver } from "./drivers/sqs";
-import { QueueDriver, QueueOptions, SqsBrokerOption } from "./interfaces";
+import { QueueOptions } from "./interfaces";
 import { QueueMetadata } from "./metadata";
+import { QueueDriver } from "@squareboat/nest-queue-strategy";
 
 @Injectable()
 export class QueueService {
   private static connections: Record<string, any> = {};
-  private connectionDrivers = { sqs: SqsQueueDriver, sync: SqsQueueDriver };
 
   constructor(@Inject(QUEUE_OPTIONS) private options: QueueOptions) {
     for (const connName in this.options.connections) {
       const connection = this.options.connections[connName];
-      QueueService.connections[connName] = new this.connectionDrivers[
-        connection.driver
-      ](connection as SqsBrokerOption);
+      const driver: any = connection.driver;
+      QueueService.connections[connName] = new driver(connection);
     }
   }
 

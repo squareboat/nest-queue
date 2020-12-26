@@ -1,25 +1,16 @@
 import { ModuleMetadata, Type } from "@nestjs/common";
+import { QueueDriver } from "@squareboat/nest-queue-strategy";
 
-export interface SqsBrokerOption {
-  driver: "sqs";
-  profile: string;
-  apiVersion: string;
-  prefix: string;
-  queue: string;
-  suffix?: string;
-  region: string;
-}
-
-export interface SyncBrokerOption {
-  driver: "sync";
-  queue?: "sync";
+export interface QueueDriverOptions {
+  driver: QueueDriver;
+  [key: string]: string | number | Record<string, any>;
 }
 
 export interface QueueOptions {
   isGlobal?: boolean;
   default: string;
   connections: {
-    [key: string]: SqsBrokerOption | SyncBrokerOption;
+    [key: string]: QueueDriverOptions;
   };
 }
 

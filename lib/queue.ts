@@ -1,7 +1,7 @@
 import { PayloadBuilder } from "./core";
-import { Message } from "./interfaces";
 import { QueueMetadata } from "./metadata";
 import { QueueService } from "./service";
+import { Message } from "@squareboat/nest-queue-strategy";
 
 export class Queue {
   static async dispatch(message: Message): Promise<void> {

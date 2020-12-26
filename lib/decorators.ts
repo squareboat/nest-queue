@@ -1,7 +1,7 @@
 import { ListensTo } from "@squareboat/nest-events";
+import { JobOptions } from "@squareboat/nest-queue-strategy";
 import "reflect-metadata";
 import { events, JOB_NAME, JOB_OPTIONS } from "./constants";
-import { JobOptions } from "./interfaces";
 
 export function Job(job: string, options?: JobOptions) {
   options = options || {};

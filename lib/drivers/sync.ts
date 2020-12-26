@@ -1,5 +1,8 @@
-import { InternalMessage, QueueDriver } from "../interfaces";
-import { DriverJob } from "../jobs";
+import {
+  DriverJob,
+  InternalMessage,
+  QueueDriver,
+} from "@squareboat/nest-queue-strategy";
 import { QueueMetadata } from "../metadata";
 
 export class SyncQueueDriver implements QueueDriver {

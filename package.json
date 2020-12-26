@@ -43,6 +43,8 @@
     "@nestjs/core": "^6.7.0 || ^7.0.0"
   },
   "dependencies": {
+    "@squareboat/nest-events": "0.0.5",
+    "@squareboat/nest-queue-strategy": "0.0.2",
     "aws-sdk": "^2.782.0"
   }
 }
