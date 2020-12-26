@@ -6,3 +6,4 @@ export * from "./decorators";
 export * from "./jobrunner";
 export * from "./worker";
 export * from "@squareboat/nest-queue-strategy";
+export * from "./drivers";

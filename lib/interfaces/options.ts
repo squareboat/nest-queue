@@ -2,7 +2,7 @@ import { ModuleMetadata, Type } from "@nestjs/common";
 import { QueueDriver } from "@squareboat/nest-queue-strategy";
 
 export interface QueueDriverOptions {
-  driver: QueueDriver;
+  driver: Type<QueueDriver>;
   [key: string]: string | number | Record<string, any>;
 }
 
