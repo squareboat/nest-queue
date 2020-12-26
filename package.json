@@ -1,6 +1,6 @@
 {
   "name": "@squareboat/nest-queue",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "The queue package for your NestJS Applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -44,6 +44,6 @@
   },
   "dependencies": {
     "@squareboat/nest-events": "0.0.5",
-    "@squareboat/nest-queue-strategy": "0.0.5"
+    "@squareboat/nest-queue-strategy": "0.0.8"
   }
 }
