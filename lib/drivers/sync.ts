@@ -25,4 +25,8 @@ export class SyncQueueDriver implements QueueDriver {
   async purge(options: Record<string, any>): Promise<void> {
     return;
   }
+
+  async count(options: Record<string, any>): Promise<number> {
+    return 0;
+  }
 }
