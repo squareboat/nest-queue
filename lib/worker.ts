@@ -55,4 +55,9 @@ export class QueueWorker {
     await connection.purge({ queue: this.options.queue });
     return;
   }
+
+  async count(): Promise<number> {
+    const connection = QueueService.getConnection(this.options.connection);
+    return await connection.count({ queue: this.options.queue });
+  }
 }
