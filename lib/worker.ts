@@ -38,16 +38,30 @@ export class QueueWorker {
    */
   async listen() {
     const connection = QueueService.getConnection(this.options.connection);
-    const worker = new JobRunner(this.options, connection);
 
+    // perform scheduled task of the driver
+    if (connection.scheduledTask) this.performScheduledTask(connection);
+
+    const runner = new JobRunner(this.options, connection);
     while (1) {
       const job = await this.poll(connection);
       if (job) {
-        await worker.run(job);
+        await runner.run(job);
       } else {
         await new Promise((resolve) => setTimeout(resolve, this.options.sleep));
       }
     }
+  }
+
+  private async performScheduledTask(connection: QueueDriver) {
+    if (!connection || !connection.scheduledTask) return;
+    setInterval(
+      async () =>
+        connection.scheduledTask
+          ? await connection.scheduledTask(this.options)
+          : null,
+      10000
+    );
   }
 
   async purge(): Promise<void> {

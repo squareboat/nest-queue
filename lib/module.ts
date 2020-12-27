@@ -1,6 +1,7 @@
 import { DynamicModule, Module, Provider, Type } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { EventModule } from "@squareboat/nest-events";
+import { QueueConsoleCommands } from "./console/QueueConsoleCommands";
 import { QUEUE_OPTIONS } from "./constants";
 import { QueueExplorer } from "./explorer";
 import {
@@ -26,6 +27,7 @@ export class QueueModule {
         QueueExplorer,
         QueueService,
         QueueMetadata,
+        QueueConsoleCommands,
         { provide: QUEUE_OPTIONS, useValue: options },
       ],
     };
@@ -43,6 +45,7 @@ export class QueueModule {
         QueueExplorer,
         QueueService,
         QueueMetadata,
+        QueueConsoleCommands,
         this.createQueueOptionsProvider(options),
       ],
     };
