@@ -12,6 +12,7 @@ export class QueueWorker {
     this.options = options || {};
     this.options = {
       ...defaultOptions,
+      schedulerInterval: 10000,
       queue: undefined,
       ...this.options,
     };
@@ -60,7 +61,7 @@ export class QueueWorker {
         connection.scheduledTask
           ? await connection.scheduledTask(this.options)
           : null,
-      10000
+      this.options.schedulerInterval || 10000
     );
   }
 

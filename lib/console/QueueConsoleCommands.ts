@@ -34,7 +34,7 @@ export class QueueConsoleCommands {
    * @param args
    */
   @Command("queue:length", {
-    desc: "   * Command to get the length of the specified queue",
+    desc: "Command to get the length of the specified queue",
     args: {
       sleep: { req: false },
       connection: { req: false },

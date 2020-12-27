@@ -31,4 +31,5 @@ export interface ListenerOptions {
   sleep?: number;
   connection?: string;
   queue?: string;
+  schedulerInterval?: number;
 }
