@@ -1,6 +1,6 @@
 {
   "name": "@squareboat/nest-queue",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "The queue package for your NestJS Applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
