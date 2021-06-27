@@ -1,9 +1,3 @@
-<img src="./cover.png" align="center">
-
-<br />
-
-<div align="center"><strong>Easily integrate queue easily inside your nestjs applications</strong></div>
-
 ## Introduction
 Queues are a form of asynchronous service-to-service communication used in backend architecture. They can be used to decouple or defer heavy weight processing such as sending Mails, processing large database operations etc. Messages are kept in queue until processed. Seperating these heavy time consuming tasks drastically improves your response.
 
@@ -13,8 +7,10 @@ __Supported Queues__
 
 - Sync
 - AWS SQS
-- Redis (Coming Soon)
+- Redis
 - RabbitMQ (Coming Soon)
+- MySQL/Postgres (Coming Soon)
+- MongoDB (Coming Soon)
 
 __Few Hightlights__
 
@@ -22,6 +18,8 @@ __Few Hightlights__
 - ✅ Handle multiple queues with ease
 - ✅ Harnesses the powerful DI system by NestJS for creating jobs
 - ✅ Configurable messages, queues and jobs
+- ✅ Delay jobs as per your requirement
+- ✅ Run multiple queues in parallel
 
 ## Documentation
 

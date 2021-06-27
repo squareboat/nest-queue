@@ -43,7 +43,7 @@
     "@nestjs/core": "^6.7.0 || ^7.0.0"
   },
   "dependencies": {
-    "@squareboat/nest-console": "0.0.3",
+    "@squareboat/nest-console": "^0.0.7",
     "@squareboat/nest-events": "0.0.5",
     "@squareboat/nest-queue-strategy": "0.0.9"
   }
