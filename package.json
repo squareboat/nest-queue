@@ -44,7 +44,7 @@
     "reflect-metadata": "^0.1.13"
   },
   "dependencies": {
-    "@squareboat/nest-console": "^0.1.0",
+    "@squareboat/nest-console": "^1.0.7",
     "@squareboat/nest-events": "^0.0.6",
     "@squareboat/nest-queue-strategy": "0.0.9"
   }
