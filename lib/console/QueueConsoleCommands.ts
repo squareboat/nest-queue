@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Command, CommandArguments, _cli } from "@squareboat/nest-console";
+import { Command, ConsoleIO } from "@squareboat/nest-console";
 import { QueueWorker } from "../worker";
 
 @Injectable()
@@ -8,18 +8,14 @@ export class QueueConsoleCommands {
    * Command to run the queue worker, starts processing the jobs
    * @param args C
    */
-  @Command("queue:work", {
+  @Command("queue:work {--sleep=} {--connection=} {--queue=}", {
     desc: "Command to run the queue worker, starts processing the jobs",
-    args: {
-      sleep: { req: false },
-      connection: { req: false },
-      queue: { req: false },
-    },
   })
-  public async startQueueWork(args: CommandArguments): Promise<void> {
-    const sleep = args.sleep as number;
-    const connection = args.connection as number;
-    const queue = args.queue as number;
+  public async startQueueWork(_cli: ConsoleIO): Promise<void> {
+    const sleep = _cli.option<number>("sleep");
+    const connection = _cli.option<number>("connection");
+    const queue = _cli.option<number>("queue");
+
     const options: { [key: string]: string | number } = {};
     if (sleep) options["sleep"] = sleep;
     if (connection) options["connection"] = connection;
@@ -33,18 +29,14 @@ export class QueueConsoleCommands {
    * Command to get the length of the specified queue
    * @param args
    */
-  @Command("queue:length", {
+  @Command("queue:length {--sleep=} {--connection=} {--queue=}", {
     desc: "Command to get the length of the specified queue",
-    args: {
-      sleep: { req: false },
-      connection: { req: false },
-      queue: { req: false },
-    },
   })
-  public async getQueueLength(args: CommandArguments): Promise<void> {
-    const sleep = args.sleep as number;
-    const connection = args.connection as number;
-    const queue = args.queue as number;
+  public async getQueueLength(_cli: ConsoleIO): Promise<void> {
+    const sleep = _cli.option<number>("sleep");
+    const connection = _cli.option<number>("connection");
+    const queue = _cli.option<number>("queue");
+
     const options: { [key: string]: string | number } = {};
     if (sleep) options["sleep"] = sleep;
     if (connection) options["connection"] = connection;
@@ -58,22 +50,19 @@ export class QueueConsoleCommands {
    * Command to purge the queue
    * @param args
    */
-  @Command("queue:purge", {
+  @Command("queue:purge {--sleep=} {--connection=} {--queue=}", {
     desc: "Command to purge the queue",
-    args: {
-      sleep: { req: false },
-      connection: { req: false },
-      queue: { req: false },
-    },
   })
-  public async purgeQueue(args: CommandArguments): Promise<void> {
-    const sleep = args.sleep as number;
-    const connection = args.connection as number;
-    const queue = args.queue as number;
+  public async purgeQueue(_cli: ConsoleIO): Promise<void> {
+    const sleep = _cli.option<number>("sleep");
+    const connection = _cli.option<number>("connection");
+    const queue = _cli.option<number>("queue");
+
     const options: { [key: string]: string | number } = {};
     if (sleep) options["sleep"] = sleep;
     if (connection) options["connection"] = connection;
     if (queue) options["queue"] = queue;
+
     const answer = await _cli.ask(
       `Do you really want to purge queue? Please be sure as this action is irreversible!\nWrite "yes,delete it" to purge the queue`
     );
