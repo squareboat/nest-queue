@@ -3,6 +3,7 @@ import { QueueMetadata } from "./metadata";
 import { QueueService } from "./service";
 import { JobRunner } from "./jobrunner";
 import { DriverJob, QueueDriver } from "@squareboat/nest-queue-strategy";
+import { Logger } from "@squareboat/nest-console";
 
 export class QueueWorker {
   private options: ListenerOptions;
@@ -14,6 +15,7 @@ export class QueueWorker {
       ...defaultOptions,
       schedulerInterval: 10000,
       queue: undefined,
+      logger: true,
       ...this.options,
     };
 
@@ -38,6 +40,7 @@ export class QueueWorker {
    * Listen to the queue
    */
   async listen() {
+    this.log("info", "LOG [QueueWorker] Queue Worker Initialised");
     const connection = QueueService.getConnection(this.options.connection);
 
     // perform scheduled task of the driver
@@ -74,5 +77,26 @@ export class QueueWorker {
   async count(): Promise<number> {
     const connection = QueueService.getConnection(this.options.connection);
     return await connection.count({ queue: this.options.queue });
+  }
+
+  log(level: string, msg: string): void {
+    if (!this.options.logger) return;
+    let logger = undefined;
+    switch (level) {
+      case "info":
+        logger = Logger.info;
+        break;
+      case "success":
+        logger = Logger.success;
+        break;
+      case "error":
+        logger = Logger.error;
+        break;
+      case "warn":
+        logger = Logger.warn;
+        break;
+    }
+
+    logger && logger(msg);
   }
 }

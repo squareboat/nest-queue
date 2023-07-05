@@ -11,7 +11,10 @@ interface JobTarget {
 @Injectable()
 export class QueueMetadata {
   private static data: QueueOptions;
-  private static defaultOptions: Record<string, string | number | undefined>;
+  private static defaultOptions: Record<
+    string,
+    string | number | boolean | undefined
+  >;
   private static store: Record<string, any> = { jobs: {} };
 
   constructor(@Inject(QUEUE_OPTIONS) data: QueueOptions) {

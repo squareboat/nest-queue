@@ -32,4 +32,5 @@ export interface ListenerOptions {
   connection?: string;
   queue?: string;
   schedulerInterval?: number;
+  logger?: boolean;
 }
