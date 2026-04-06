@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@nestjs/common": "^9.0.3",
-    "@nestjs/core": "^9.0.3",
+    "@nestjs/core": "^11.1.18",
     "reflect-metadata": "^0.1.13",
     "typescript": "^4.9.5"
   },
