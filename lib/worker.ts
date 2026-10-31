@@ -48,24 +48,47 @@ export class QueueWorker {
 
     const runner = new JobRunner(this.options, connection);
     while (1) {
-      const job = await this.poll(connection);
-      if (job) {
-        await runner.run(job);
-      } else {
+      let job: DriverJob | null;
+      try {
+        job = await this.poll(connection);
+      } catch (e) {
+        // e.g. a network error: log it and try again after `sleep`
+        this.log("error", `LOG [QueueWorker] Could not fetch a job | Error: ${errorMessage(e)}`);
         await new Promise((resolve) => setTimeout(resolve, this.options.sleep));
+        continue;
+      }
+
+      if (!job) {
+        await new Promise((resolve) => setTimeout(resolve, this.options.sleep));
+        continue;
+      }
+
+      // a failing run (e.g. the driver could not remove or re-dispatch the job)
+      // must not end the worker loop
+      try {
+        await runner.run(job);
+      } catch (e) {
+        this.log("error", `LOG [QueueWorker] Job run failed | Error: ${errorMessage(e)}`);
       }
     }
   }
 
   private async performScheduledTask(connection: QueueDriver) {
     if (!connection || !connection.scheduledTask) return;
-    setInterval(
-      async () =>
-        connection.scheduledTask
-          ? await connection.scheduledTask(this.options)
-          : null,
-      this.options.schedulerInterval || 10000
-    );
+    let running = false;
+    setInterval(async () => {
+      // skip a tick while the previous one is still running, and never let a
+      // failing tick become an unhandled rejection
+      if (running || !connection.scheduledTask) return;
+      running = true;
+      try {
+        await connection.scheduledTask(this.options);
+      } catch (e) {
+        this.log("error", `LOG [QueueWorker] Scheduled task failed | Error: ${errorMessage(e)}`);
+      } finally {
+        running = false;
+      }
+    }, this.options.schedulerInterval || 10000);
   }
 
   async purge(): Promise<void> {
@@ -99,4 +122,8 @@ export class QueueWorker {
 
     logger && logger(msg);
   }
+}
+
+function errorMessage(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
 }

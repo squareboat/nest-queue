@@ -82,11 +82,12 @@ export class JobRunner {
    * @param job
    */
   async retry(message: InternalMessage, job: DriverJob): Promise<void> {
-    this.removeJobFromQueue(job);
+    // remove exactly once: SQS rejects a second DeleteMessage for the same
+    // receipt handle, which used to skip the re-dispatch below (job lost)
     await this.removeJobFromQueue(job);
     message.attemptCount += 1;
     if (message.attemptCount === message.tries) return;
-    Dispatch(message);
+    await Dispatch(message);
   }
 
   /**
