@@ -68,8 +68,14 @@ export class QueueWorker {
   }
 
   private async work(): Promise<void> {
-    this.log("info", "LOG [QueueWorker] Queue Worker Initialised");
     const connection = QueueService.getConnection(this.options.connection);
+    if (!connection) {
+      // fail fast instead of logging a poll error forever
+      throw new Error(
+        `Queue connection "${this.options.connection}" is not configured`
+      );
+    }
+    this.log("info", "LOG [QueueWorker] Queue Worker Initialised");
 
     // perform scheduled task of the driver
     const scheduler = this.performScheduledTask(connection);
