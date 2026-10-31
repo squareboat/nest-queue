@@ -6,7 +6,7 @@ import {
 import { ListenerOptions } from "./interfaces";
 import { QueueMetadata } from "./metadata";
 import { Dispatch } from "./queue";
-import { EmitEvent } from "@squareboat/nest-events";
+import { EmitsEvent } from "@squareboat/nest-events";
 import { JobFailed, JobProcessed, JobProcessing } from "./events";
 import { ConsoleIO, Logger } from "@squareboat/nest-console";
 
@@ -23,23 +23,42 @@ export class JobRunner {
   async run(job: DriverJob) {
     const message = this.fetchMessage(job);
     const { data } = message;
+    this.log("info", `LOG [${message.job}] Job Processing...`);
     try {
-      this.log("info", `LOG [${message.job}] Job Processing...`);
       const targetJob = QueueMetadata.getJob(message.job);
-      if (!targetJob || !targetJob.target) return;
-      const event = new JobProcessing(message, job);
-      event.emit();
+      if (!targetJob || !targetJob.target) {
+        // fail like a throwing job (logged, JobFailed, retried up to `tries`)
+        // instead of dropping the message silently
+        throw new Error(`No handler is registered for job "${message.job}"`);
+      }
+      await this.emit(new JobProcessing(message, job), message);
       await targetJob.target(data);
-      await this.success(message, job);
-      this.log("success", `LOG [${message.job}] Job Processed`);
     } catch (e) {
-      const event = new JobFailed(message, job);
-      event.emit();
-      await this.retry(message, job);
-      const errorMessage = (e as Error).message;
       this.log(
         "error",
-        `LOG [${message.job}] Job Failed | Error: ${errorMessage}`
+        `LOG [${message.job}] Job Failed | Error: ${errorMessage(e)}`
+      );
+      await this.emit(new JobFailed(message, job, e), message);
+      await this.retry(message, job);
+      return;
+    }
+
+    // outside the try: a failing remove() is not a failed job (no retry)
+    await this.success(message, job);
+    this.log("success", `LOG [${message.job}] Job Processed`);
+  }
+
+  /**
+   * Run the event's listeners and wait for them. A throwing listener is
+   * logged and never fails the job or crashes the worker.
+   */
+  private async emit(event: EmitsEvent, message: InternalMessage): Promise<void> {
+    try {
+      await event.emit();
+    } catch (e) {
+      this.log(
+        "error",
+        `LOG [${message.job}] ${event.constructor.name} listener failed | Error: ${errorMessage(e)}`
       );
     }
   }
@@ -71,9 +90,8 @@ export class JobRunner {
    * @param job
    */
   async success(message: InternalMessage, job: DriverJob): Promise<void> {
-    const event = new JobProcessed(message, job);
-    event.emit();
     await this.removeJobFromQueue(job);
+    await this.emit(new JobProcessed(message, job), message);
   }
 
   /**
@@ -82,11 +100,12 @@ export class JobRunner {
    * @param job
    */
   async retry(message: InternalMessage, job: DriverJob): Promise<void> {
-    this.removeJobFromQueue(job);
+    // remove exactly once: SQS rejects a second DeleteMessage for the same
+    // receipt handle, which used to skip the re-dispatch below (job lost)
     await this.removeJobFromQueue(job);
     message.attemptCount += 1;
     if (message.attemptCount === message.tries) return;
-    Dispatch(message);
+    await Dispatch(message);
   }
 
   /**
@@ -104,4 +123,8 @@ export class JobRunner {
   fetchMessage(job: DriverJob): InternalMessage {
     return JSON.parse(job.getMessage());
   }
+}
+
+function errorMessage(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
 }

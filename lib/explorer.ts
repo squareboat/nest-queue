@@ -21,11 +21,10 @@ export class QueueExplorer implements OnModuleInit {
       ) {
         return;
       }
-      this.metadataScanner.scanFromPrototype(
-        instance,
-        Object.getPrototypeOf(instance),
-        (key: string) => this.lookupJobs(instance, key),
-      );
+      // getAllMethodNames replaces scanFromPrototype, which is deprecated since Nest 10
+      for (const key of this.metadataScanner.getAllMethodNames(Object.getPrototypeOf(instance))) {
+        this.lookupJobs(instance, key);
+      }
     });
   }
 

@@ -8,10 +8,16 @@ import { QueueMetadata } from "../metadata";
 export class SyncQueueDriver implements QueueDriver {
   constructor() {}
 
+  /**
+   * Runs the job right away. `Dispatch()` resolves when the job is done and
+   * rejects with the job's error.
+   */
   async push(message: string, rawPayload: InternalMessage): Promise<void> {
     const job = QueueMetadata.getJob(rawPayload.job);
-    job.target(rawPayload.data);
-    return;
+    if (!job || !job.target) {
+      throw new Error(`No handler is registered for job "${rawPayload.job}"`);
+    }
+    await job.target(rawPayload.data);
   }
 
   async pull(options: Record<string, any>): Promise<DriverJob | null> {
