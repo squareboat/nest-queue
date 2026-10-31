@@ -26,14 +26,18 @@ export class JobRunner {
     try {
       this.log("info", `LOG [${message.job}] Job Processing...`);
       const targetJob = QueueMetadata.getJob(message.job);
-      if (!targetJob || !targetJob.target) return;
+      if (!targetJob || !targetJob.target) {
+        // fail like a throwing job (logged, JobFailed, retried up to `tries`)
+        // instead of dropping the message silently
+        throw new Error(`No handler is registered for job "${message.job}"`);
+      }
       const event = new JobProcessing(message, job);
       event.emit();
       await targetJob.target(data);
       await this.success(message, job);
       this.log("success", `LOG [${message.job}] Job Processed`);
     } catch (e) {
-      const event = new JobFailed(message, job);
+      const event = new JobFailed(message, job, e);
       event.emit();
       await this.retry(message, job);
       const errorMessage = (e as Error).message;
