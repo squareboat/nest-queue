@@ -40,13 +40,14 @@ export class QueueModule {
     return {
       global: options.isGlobal || false,
       module: QueueModule,
-      imports: [DiscoveryModule, EventModule],
+      imports: [DiscoveryModule, EventModule, ...(options.imports || [])],
       providers: [
         QueueExplorer,
         QueueService,
         QueueMetadata,
         QueueConsoleCommands,
         this.createQueueOptionsProvider(options),
+        ...(options.useClass ? [{ provide: options.useClass, useClass: options.useClass }] : []),
       ],
     };
   }
@@ -63,7 +64,7 @@ export class QueueModule {
     }
 
     const inject = [
-      (options.useClass || options.useExisting) as Type<QueueOptions>,
+      (options.useClass || options.useExisting) as Type<QueueAsyncOptionsFactory>,
     ];
 
     return {
