@@ -3,7 +3,12 @@ import { QueueDriver } from "@squareboat/nest-queue-strategy";
 
 export interface QueueDriverOptions {
   driver: Type<QueueDriver>;
-  [key: string]: string | number | Record<string, any>;
+  /**
+   * Driver specific options (host, port, url, queue, region, ...). Typed loosely
+   * so values like `process.env.X` (`string | undefined`), `null` and booleans
+   * compile under `strict`; each driver validates its own options.
+   */
+  [key: string]: any;
 }
 
 export interface QueueOptions {
@@ -20,7 +25,7 @@ export interface QueueAsyncOptionsFactory {
 
 export interface QueueAsyncOptions extends Pick<ModuleMetadata, "imports"> {
   name?: string;
-  isGlobal: boolean;
+  isGlobal?: boolean;
   useExisting?: Type<QueueAsyncOptionsFactory>;
   useClass?: Type<QueueAsyncOptionsFactory>;
   useFactory?: (...args: any[]) => Promise<QueueOptions> | QueueOptions;
