@@ -1,6 +1,6 @@
 {
   "name": "@squareboat/nest-queue",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "The queue package for your NestJS Applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
     "url": "https://github.com/squareboat/nest-queue/issues"
   },
   "homepage": "https://squareboat.com/open-source/nest-queue/",
-  "author": "Vinayak Sarawagi <vinayaksarawagi25@gmail.com>",
+  "author": "Squareboat <hi@squareboat.com>",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -30,22 +30,29 @@
     "prepublish:next": "npm run build",
     "publish:next": "npm publish --access public --tag next",
     "test:e2e": "jest --config ./tests/jest-e2e.json --runInBand",
-    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch"
+    "test:e2e:dev": "jest --config ./tests/jest-e2e.json --runInBand --watch",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
-    "@nestjs/common": "^9.0.3",
-    "@nestjs/core": "^9.0.3",
-    "reflect-metadata": "^0.1.13",
-    "typescript": "^4.9.5"
+    "@nestjs/common": "^12.3.2",
+    "@nestjs/core": "^12.3.2",
+    "@squareboat/nest-console": "^2.0.0",
+    "@types/node": "^20.19.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "@nestjs/common": "^7.0.0 || ^8.0.0 || ^9.0.0",
-    "@nestjs/core": "^7.0.0 || ^8.0.0 || ^9.0.0",
-    "@squareboat/nest-console": "^1.1.1",
-    "reflect-metadata": "^0.1.13"
+    "@nestjs/common": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "@nestjs/core": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "@squareboat/nest-console": "^2.0.0",
+    "reflect-metadata": "^0.1.13 || ^0.2.0"
   },
   "dependencies": {
-    "@squareboat/nest-events": "^0.1.0",
-    "@squareboat/nest-queue-strategy": "0.0.9"
+    "@squareboat/nest-events": "^0.2.0",
+    "@squareboat/nest-queue-strategy": "^0.1.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -17,3 +17,6 @@ npm-debug.log
 
 # dist
 dist
+
+# created by @squareboat/nest-console postinstall
+/cli
