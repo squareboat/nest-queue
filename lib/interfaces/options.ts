@@ -17,6 +17,12 @@ export interface QueueOptions {
   connections: {
     [key: string]: QueueDriverOptions;
   };
+  /**
+   * On `app.close()`: how long (ms) to wait for running workers to finish
+   * their current job, and then for each connection to disconnect.
+   * Default 5000.
+   */
+  shutdownTimeout?: number;
 }
 
 export interface QueueAsyncOptionsFactory {
